@@ -7,9 +7,13 @@ from app.forms import CustomerForm, LoginForm, SignupForm
 
 
 bcrypt = Bcrypt(app)
-@app.route('/')
+@app.route('/home')
+@login_required
 def home():
-    return render_template('home.html')
+    total_customers = len(Customer.query.all())  # Example stat: total number of customers
+    recent_customers = Customer.query.order_by(Customer.id.desc()).limit(5).all()  # Last 5 customers
+    return render_template('dashboard.html', total_customers=total_customers, recent_customers=recent_customers)
+
 
 @app.route('/customers', methods=['GET', 'POST'])
 @login_required
@@ -80,11 +84,11 @@ def login():
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user)
             flash('You have been logged in!', 'success')
-            return redirect(url_for('list_customers'))
+            return redirect(url_for('home'))  # Redirect to dashboard
         else:
-            flash('Login unsuccessful. Please check email and password', 'danger')
-
+            flash('Login unsuccessful. Please check email and password.', 'danger')
     return render_template('login.html', form=form)
+
 
 @app.route('/logout')
 def logout():
@@ -97,6 +101,27 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 
+@app.route('/add_customer', methods=['GET', 'POST'])
+@login_required
+def add_customer():
+    form = CustomerForm()
+    if form.validate_on_submit():
+        new_customer = Customer(
+            name=form.name.data,
+            email=form.email.data,
+            phone=form.phone.data
+        )
+        db.session.add(new_customer)
+        db.session.commit()
+        flash('Customer added successfully!', 'success')
+        return redirect(url_for('home'))
+    return render_template('add_customer.html', form=form)
+
+@app.route('/reports')
+@login_required
+def reports():
+    flash('Reports page is under construction.', 'info')
+    return redirect(url_for('home'))
 
 
 

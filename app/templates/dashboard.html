@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <h1>Welcome to Your Dashboard</h1>
+    <p>Manage your customers and gain insights.</p>
+    <a href="{{ url_for('list_customers') }}" class="btn btn-primary">Get Started</a>
+</div>
+
+<div class="container mt-5">
+    <div class="row">
+        <!-- Card 1 -->
+        <div class="col-md-6">
+            <div class="card-glass">
+                <h3>Total Customers</h3>
+                <p class="display-4">{{ total_customers }}</p>
+            </div>
+        </div>
+        <!-- Card 2 -->
+        <div class="col-md-6">
+            <div class="card-glass">
+                <h3>Recent Customers</h3>
+                <ul>
+                    {% for customer in recent_customers %}
+                        <li>{{ customer.name }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
