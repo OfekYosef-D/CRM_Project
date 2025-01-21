@@ -1,13 +1,18 @@
 from flask import render_template, redirect, url_for, request, flash
-from app import app, db
-from app.models import Customer
-from app.forms import CustomerForm
+from flask_login import login_user, logout_user, login_required
+from flask_bcrypt import Bcrypt
+from app import app, db, login_manager
+from app.models import Customer, User
+from app.forms import CustomerForm, LoginForm, SignupForm
 
+
+bcrypt = Bcrypt(app)
 @app.route('/')
 def home():
     return render_template('home.html')
 
 @app.route('/customers', methods=['GET', 'POST'])
+@login_required
 def list_customers():
     form = CustomerForm() # Create an instance of the form
     search_query = request.args.get('search') # Get the search term from the url
@@ -56,9 +61,40 @@ def delete_customer(customer_id):
     flash('Customer deleted successfully!', 'success')
     return redirect(url_for('list_customers'))
 
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    form = SignupForm()
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user = User(username=form.username.data, email=form.email.data, password=hashed_password)
+        db.session.add(user)
+        db.session.commit()
+        flash('Account created! You can now log in.', 'success')
+        return redirect(url_for('login'))
+    return render_template('signup.html', form=form)
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user and bcrypt.check_password_hash(user.password, form.password.data):
+            login_user(user)
+            flash('You have been logged in!', 'success')
+            return redirect(url_for('list_customers'))
+        else:
+            flash('Login unsuccessful. Please check email and password', 'danger')
 
+    return render_template('login.html', form=form)
 
+@app.route('/logout')
+def logout():
+    logout_user()
+    flash('You have been logged out!', 'success')
+    return redirect(url_for('login'))
 
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 
 
