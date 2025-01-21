@@ -8,6 +8,10 @@
 </head>
 <body class="container mt-5">
     <h1 class="text-center">Customer List</h1>
+    <form method="GET" action="/customers" class="d-flex mb-3">
+        <input type="text" name="search" class="form-control me-2" placeholder="Search customers..." value="{{ request.args.get('search', '') }}">
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
     <table class="table table-striped">
         <thead>
             <tr>

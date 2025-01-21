@@ -10,6 +10,16 @@ def home():
 @app.route('/customers', methods=['GET', 'POST'])
 def list_customers():
     form = CustomerForm() # Create an instance of the form
+    search_query = request.args.get('search') # Get the search term from the url
+    if search_query: # If the user used search function, display the current customer only.
+        customers = Customer.query.filter(
+            (Customer.name.ilike(f"%{search_query}%")) |
+            (Customer.email.ilike(f"%{search_query}%")) |
+            (Customer.phone.ilike(f"%{search_query}%"))
+        ).all()
+    else: # If the user didn't use the search function, displaying all customers.
+        customers = Customer.query.all()
+
     if form.validate_on_submit(): # Checks if the form was submitted and valid
         # Add the new customer to the DB
         new_customer = Customer(
@@ -21,7 +31,6 @@ def list_customers():
         db.session.commit()
         return redirect(url_for('list_customers')) # Refresh the page to show changes
 
-    customers = Customer.query.all()
     return render_template('customers.html', form=form, customers=customers)
 
 @app.route('/edit/<int:customer_id>', methods=['GET', 'POST'])
