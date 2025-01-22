@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Add Customer{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card p-4 mx-auto" style="max-width: 600px; border-radius: 15px; backdrop-filter: blur(10px); background-color: rgba(255, 255, 255, 0.6); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);">
+        <h2 class="text-center text-primary mb-4" style="font-weight: 600;">Add a New Customer</h2>
+        <p class="text-center text-muted">Fill out the form below to add a customer to the CRM system.</p>
+        <form method="POST">
+            {{ form.hidden_tag() }}
+            <div class="mb-3">
+                <label for="name" class="form-label text-primary" style="font-weight: 500;">Name</label>
+                {{ form.name(class="form-control", style="padding: 10px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);") }}
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label text-primary" style="font-weight: 500;">Email</label>
+                {{ form.email(class="form-control", style="padding: 10px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);") }}
+            </div>
+            <div class="mb-3">
+                <label for="phone" class="form-label text-primary" style="font-weight: 500;">Phone</label>
+                {{ form.phone(class="form-control", style="padding: 10px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);") }}
+            </div>
+            <button type="submit" class="btn btn-primary w-100 mt-3" style="box-shadow: 0 4px 10px rgba(130, 35, 207, 0.8); font-size: 1rem;">
+                Add Customer
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

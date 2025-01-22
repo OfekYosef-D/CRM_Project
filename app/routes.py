@@ -120,8 +120,7 @@ def add_customer():
 @app.route('/reports')
 @login_required
 def reports():
-    flash('Reports page is under construction.', 'info')
-    return redirect(url_for('home'))
+    return render_template('reports.html', title="Reports")
 
 
 

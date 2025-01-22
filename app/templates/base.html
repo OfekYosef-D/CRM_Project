@@ -9,106 +9,80 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         body {
-            background: radial-gradient(circle at top, #5002A3, #000000);
+            background-color: #F8F9FA; /* Light gray for readability */
             font-family: 'Poppins', sans-serif;
-            color: #D9D9D9;
+            color: #333333; /* Dark text for contrast */
             margin: 0;
             padding: 0;
         }
 
-        /* Navbar with Glassmorphism styling */
+        /* Navbar Styling */
         .navbar {
             backdrop-filter: blur(15px);
-            background-color: rgba(80, 2, 163, 0.6);
-            padding: 15px 30px;
+            background-color: rgba(80, 2, 163, 0.8);
+            padding: 10px 30px;
             border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-        }
-
-        .navbar-nav {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 25px;
-            padding: 10px 20px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
         }
 
-        .navbar .nav-link {
+        .navbar .navbar-left {
+            font-size: 1.2rem;
+            font-weight: 600;
             color: white;
-            padding: 8px 15px;
+        }
+
+        .navbar .navbar-nav {
+            flex-grow: 1;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .navbar .nav-link {
             font-size: 1rem;
-            border-radius: 15px;
+            color: white;
+            border-radius: 12px;
+            padding: 8px 15px;
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        .navbar .nav-link.active, .navbar .nav-link:hover {
+        .navbar .nav-link.active,
+        .navbar .nav-link:hover {
             background-color: #8223CF;
             color: white;
         }
 
-        .btn-primary {
+        .navbar .btn-primary {
+            font-size: 0.9rem;
+            padding: 8px 15px;
             background: linear-gradient(to right, #5002A3, #8223CF);
             border: none;
-            padding: 10px 20px;
-            font-size: 1.2rem;
+            border-radius: 12px;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
-        .btn-primary:hover {
+        .navbar .btn-primary:hover {
             transform: scale(1.1);
             box-shadow: 0 8px 20px rgba(130, 35, 207, 1);
-        }
-
-        .hero {
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            text-align: center;
-            color: white;
-        }
-
-        .hero h1 {
-            font-size: 4rem;
-            text-shadow: 0 0 10px #8223CF;
-        }
-
-        .hero .btn-primary {
-            margin-top: 20px;
-            box-shadow: 0 4px 10px rgba(130, 35, 207, 0.8);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .hero .btn-primary:hover {
-            transform: scale(1.1);
-            box-shadow: 0 8px 20px rgba(130, 35, 207, 1);
-        }
-
-        .footer {
-            background-color: #5002A3;
-            padding: 20px;
-            text-align: center;
-            color: #D9D9D9;
-            margin-top: 30px;
         }
     </style>
 </head>
 <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
+    <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
-            <!-- Brand Logo -->
-            <a class="navbar-brand d-flex align-items-center" href="{{ url_for('home') }}">
-                <img src="{{ url_for('static', filename='images/oy_logo.png') }}" alt="CRM Logo" style="width: 50px; height: 50px; margin-right: 15px; border-radius: 50%; vertical-align: middle;">
-                <span>CRM</span>
-            </a>
+            <!-- Greeting Section -->
+            {% if current_user.is_authenticated %}
+            <div class="navbar-left me-auto">
+                Hello, <span>{{ current_user.username }}</span>
+            </div>
+            {% else %}
+            <div class="navbar-left me-auto">
+                Welcome!
+            </div>
+            {% endif %}
 
-            <!-- Toggler for mobile view -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
-                <!-- Navigation Links -->
+            <!-- Center Navigation Links -->
+            <div class="collapse navbar-collapse">
                 <ul class="navbar-nav">
                     <li class="nav-item">
                         <a class="nav-link {% if request.endpoint == 'home' %}active{% endif %}" href="{{ url_for('home') }}">Home</a>
@@ -124,25 +98,28 @@
                     </li>
                 </ul>
             </div>
-            <!-- Buttons -->
-            <div class="d-flex">
-                <a href="{{ url_for('login') }}" class="btn btn-primary">Login</a>
-                <a href="{{ url_for('signup') }}" class="btn btn-primary">Sign up</a>
+
+            <!-- Right Section -->
+            {% if current_user.is_authenticated %}
+            <a class="btn btn-primary" href="{{ url_for('logout') }}">Logout</a>
+            {% else %}
+            <div>
+                <a class="btn btn-primary me-2" href="{{ url_for('login') }}">Login</a>
+                <a class="btn btn-primary" href="{{ url_for('signup') }}">Sign Up</a>
             </div>
+            {% endif %}
         </div>
     </nav>
 
     <!-- Content -->
-    <div class="container" style="margin-top: 100px;">
+    <div class="container mt-4">
         {% block content %}{% endblock %}
     </div>
 
     <!-- Footer -->
-    <footer class="footer">
+    <footer class="text-center mt-4">
         <p>&copy; 2025 CRM System | All Rights Reserved</p>
     </footer>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </html>
